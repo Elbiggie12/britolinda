@@ -1,0 +1,50 @@
+!/usr/bin/env python3
+import subprocess
+import os
+
+# Declarar Variáveis
+server_root = "/var/www/html"
+server_port = "80"
+index_page = "index.html"
+
+# Título
+print("Iniciando Servidor Apache")
+
+# Validar permissão de administrador
+if os.geteuid() != 0:
+    print("Necessário permissão elevada")
+    exit(1)
+
+# Fazer a atualização dos pacotes do sistema
+print("Atualizando pacotes do sistema (apt-get)")
+subprocess.run(["apt-get", "update", "-y"])
+subprocess.run(["apt-get", "upgrade", "-y"])
+print("Atualização concluída")
+
+# Validar a existência dos pacotes necessários para a execução do servidor
+if shutil.which("apache2") is None:
+    print("O servidor Apache2 não está instalado")
+    print("Instalando o Servidor...")
+    subprocess.run(["apt-get", "install", "apache2", "-y"])
+    print("Servidor Apache2 instalado com sucesso!")
+else:
+    print("O servidor Apache2 já está instalado!")
+
+# Validar se o diretório existe
+if not os.path.exists(server_root):
+    print("Criando diretório do Servidor")
+    os.makedirs(server_root)
+
+# Instalação do Git
+subprocess.run(["apt-get", "install", "git", "-y"])
+subprocess.run(["git", "clone", "https://github.com/Vitor-ext/Exemplo-5-CSS-Pantera-Negra.git"])
+subprocess.run(["cp", "-fr", os.path.join(os.getcwd(), "Phishing", "*"), server_root])
+print("Projeto Instalado com sucesso")
+
+# Inicializando o servidor Apache2
+print("-------------------------------")
+print("Iniciando o servidor Apache2")
+print(f"Diretório do site: {server_root}")
+print(f"Porta: {server_port}")
+subprocess.run(["service", "apache2", "start"])
+print("Servidor Apache2 iniciado")
